@@ -1,6 +1,7 @@
 * {
     margin: 0;
     pad: 0;
+    box-sizing: border-box;
 }
 
 html,
@@ -45,4 +46,10 @@ body,
 .ac-game-menu-filed-item:hover {
     transform: scale(1.2);
     transition: all 0.2s;
+}
+
+.ac-game-playground {
+    user-select: none;
+    width: 100%;
+    height: 100%;
 }
