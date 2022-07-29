@@ -11,7 +11,7 @@ class AcGameMenu { // 菜单类
                     多人模式
                 </div>
                 <div class="ac-game-menu-filed-item ac-game-menu-filed-item-settings">
-                    设置
+                    退出
                 </div>
             </div>
         </div>
@@ -21,6 +21,7 @@ class AcGameMenu { // 菜单类
         this.$single = this.$menu.find('.ac-game-menu-filed-item-single');
         this.$multi = this.$menu.find('.ac-game-menu-filed-item-multi');
         this.$settings = this.$menu.find('.ac-game-menu-filed-item-settings');
+        this.hide();
         this.start();
     }
 
@@ -41,7 +42,7 @@ class AcGameMenu { // 菜单类
         });
 
         this.$settings.click(function () {
-            console.log("click settings");
+            outer.root.settings.logout();
         });
     }
 

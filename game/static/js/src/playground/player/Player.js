@@ -28,13 +28,17 @@ class Player extends AcGameObject {
         this.cur_skill = null;
 
         this.is_live = true;
+
+        if (this.is_me) {
+            this.img = new Image();
+            this.img.src = this.playground.root.settings.photo;
+        }
     }
 
     attacked (angle, damage) {
         // 被攻击了
         this.radius -= damage;// 被攻击的圆的, 将会减少
         if (this.radius < 10) { // 半径小于10, 就等于死亡
-            console.log(123);
             this.is_live = false;
             this.destroy();
             return false;
@@ -61,13 +65,14 @@ class Player extends AcGameObject {
         }); // 取消点击右键的默认事件
 
         this.playground.game_map.$canvas.mousedown(function (e) {
+            const rect = outer.ctx.canvas.getBoundingClientRect();
             if (!outer.is_live) return;
             if (e.which === 3) { // 点击事件, which = 1, 左键, which= 2, 滚轮, which = 3, 右键
-                outer.move_to(e.clientX, e.clientY); // 点击位置的坐标
+                outer.move_to(e.clientX - rect.left, e.clientY - rect.top); // 点击位置的坐标
             }
             if (e.which === 1) { // 鼠标左键
                 if (outer.cur_skill === "fireball") {
-                    outer.shoot_fireball(e.clientX, e.clientY);
+                    outer.shoot_fireball(e.clientX - rect.left, e.clientY - rect.top);
                 }
                 outer.cur_skill = null;
             }
@@ -160,11 +165,23 @@ class Player extends AcGameObject {
     }
 
     render () {
-        this.ctx.beginPath();
-        // 参数分别是圆心坐标, 半径, 弧度0~360, 是否顺时针
-        this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
-        this.ctx.fillStyle = this.color;
-        this.ctx.fill();
+        if (this.is_me) {
+            this.ctx.save();
+            this.ctx.beginPath();
+            this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+            this.ctx.stroke();
+            this.ctx.clip();
+            this.ctx.drawImage(this.img, this.x - this.radius, this.y - this.radius, this.radius * 2, this.radius * 2);
+            this.ctx.restore();
+        }
+        else {
+            this.ctx.beginPath();
+            // 参数分别是圆心坐标, 半径, 弧度0~360, 是否顺时针
+            this.ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2, false);
+            this.ctx.fillStyle = this.color;
+            this.ctx.fill();
+        }
+
     }
 
     on_destroy () {
