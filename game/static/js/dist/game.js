@@ -590,7 +590,6 @@ class Settings {
                 password: password,
             },
             success: function (resp) {
-                console.log(resp);
                 if (resp.res === "success") {
                     location.reload();
                 } else {
@@ -616,7 +615,6 @@ class Settings {
                 repassword: repassword,
             },
             success: function (resp) {
-                console.log(resp);
                 if (resp.res === "success") {
                     location.reload();
                 } else {
@@ -655,7 +653,6 @@ class Settings {
             url: "https://app2922.acapp.acwing.com.cn/settings/acwing/web/apply_code/",
             type: "GET",
             success: function (resp) {
-                console.log(resp);
                 if (resp.res === "success") {
                     window.location.replace(resp.apply_code_url);
                 }
@@ -710,7 +707,6 @@ class Settings {
                 platform: outer.platform
             },
             success: function (resp) {
-                console.log(resp);
                 if (resp.res === "success") {
                     outer.username = resp.username;
                     outer.photo = resp.photo;
@@ -725,7 +721,6 @@ class Settings {
     acapp_login (appid, redirect_uri, scope, state) {
         let outer = this;
         this.root.AcWingOS.api.oauth2.authorize(appid, redirect_uri, scope, state, (resp) => {
-            console.log(resp, 123123123);
             if (resp.res === "success") {
                 outer.username = resp.username;
                 outer.photo = resp.photo;
@@ -744,6 +739,9 @@ class Settings {
                 if (resp.res === 'success') {
                     // 成功获取到appid, state, scope等信息
                     outer.acapp_login(resp.appid, resp.redirect_uri, resp.scope, resp.state);
+                }
+                else {
+                    console.log(resp.res);
                 }
             }
         })
