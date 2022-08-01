@@ -1,6 +1,7 @@
 
 export class AcGame { // 整个游戏的类
     constructor(id, AcWingOS) {  // 构造函数, 
+        console.log(AcWingOS);
         this.id = id;
         this.AcWingOS = AcWingOS;
         this.$ac_game = $('#' + id); // 获取id这个div
