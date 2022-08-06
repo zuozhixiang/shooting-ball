@@ -31,9 +31,9 @@ def receive_code(request):
 
 
     # 然后通过code , 来向acwing获取  允许登录的token和openid
-    app_secret = "eb6718efd2be4d7890e48c1cd332a355"
+    app_secret = "7e7542613f774319a4bb2862a2a3ebba"
     apply_access_token_url = "https://www.acwing.com/third_party/api/oauth2/access_token/"
-    appid = '2922'
+    appid = '2989'
 
     params = {
         'appid': appid,

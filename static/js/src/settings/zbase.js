@@ -29,7 +29,7 @@ class Settings {
                 </div>
 
                 <div class="ac-game-settings-acwinglogin">
-                    <img src="https://app2922.acapp.acwing.com.cn/static/image/settings/logo.png" width="30">
+                    <img src="https://app2989.acapp.acwing.com.cn/static/image/settings/logo.png" width="30">
                     <div>AcWing一键登录</div>
                 </div>
             </div>
@@ -57,7 +57,7 @@ class Settings {
                 </div>
 
                 <div class="ac-game-settings-acwinglogin">
-                    <img src="https://app2922.acapp.acwing.com.cn/static/image/settings/logo.png" width="30">
+                    <img src="https://app2989.acapp.acwing.com.cn/static/image/settings/logo.png" width="30">
                     <div>AcWing一键注册</div>
                 </div>
             </div>
@@ -98,7 +98,7 @@ class Settings {
         let outer = this;
 
         $.ajax({
-            url: 'https://app2922.acapp.acwing.com.cn/settings/login/',
+            url: 'https://app2989.acapp.acwing.com.cn/settings/login/',
             type: 'GET',
             data: {
                 username: username,
@@ -122,7 +122,7 @@ class Settings {
         let outer = this;
 
         $.ajax({
-            url: 'https://app2922.acapp.acwing.com.cn/settings/register/',
+            url: 'https://app2989.acapp.acwing.com.cn/settings/register/',
             type: 'GET',
             data: {
                 username: username,
@@ -142,7 +142,7 @@ class Settings {
     logout () {
         if (this.platform === "ACAPP") return false;
         $.ajax({
-            url: "https://app2922.acapp.acwing.com.cn/settings/logout/",
+            url: "https://app2989.acapp.acwing.com.cn/settings/logout/",
             type: 'GET',
             success: function (resp) {
                 if (resp.res === "success") {
@@ -165,7 +165,7 @@ class Settings {
 
     acwing_login () {
         $.ajax({
-            url: "https://app2922.acapp.acwing.com.cn/settings/acwing/web/apply_code/",
+            url: "https://app2989.acapp.acwing.com.cn/settings/acwing/web/apply_code/",
             type: "GET",
             success: function (resp) {
                 if (resp.res === "success") {
@@ -216,7 +216,7 @@ class Settings {
     get_info_web () {
         let outer = this;
         $.ajax({
-            url: 'https://app2922.acapp.acwing.com.cn/settings/getInfo/',
+            url: 'https://app2989.acapp.acwing.com.cn/settings/getInfo/',
             type: 'GET',
             data: {
                 platform: outer.platform
@@ -248,7 +248,7 @@ class Settings {
     get_info_acapp () {
         let outer = this;
         $.ajax({
-            url: 'https://app2922.acapp.acwing.com.cn/settings/acwing/acapp/apply_code/',
+            url: 'https://app2989.acapp.acwing.com.cn/settings/acwing/acapp/apply_code/',
             type: 'get',
             success (resp) {
                 if (resp.res === 'success') {
