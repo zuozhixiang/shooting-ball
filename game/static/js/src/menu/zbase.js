@@ -34,11 +34,12 @@ class AcGameMenu { // 菜单类
         let outer = this;
         this.$single.click(function () { // 点击单人模式
             outer.hide() // 菜单界面隐藏
-            outer.root.playground.show(); // 游戏界面打开
+            outer.root.playground.show("single mode"); // 游戏界面打开
         });
 
         this.$multi.click(function () {
-            console.log("click multi");
+            outer.hide();
+            outer.root.playground.show("multi mode");
         });
 
         this.$settings.click(function () {

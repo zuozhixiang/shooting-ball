@@ -1,5 +1,5 @@
 class Player extends AcGameObject {
-    constructor(playground, x, y, radius, color, speed, is_me) {
+    constructor(playground, x, y, radius, color, speed, character, username, photo) {
         super();
         this.playground = playground;
         // 游戏的画布
@@ -19,7 +19,9 @@ class Player extends AcGameObject {
         this.color = color;
         this.speed = speed;
         // 是不是玩家, 若不是, 则是人机
-        this.is_me = is_me;
+        this.character = character;
+        this.username = username;
+        this.photo = photo;
         this.eps = 0.01;
 
         // 摩擦力, 用来减小速度, 速度小于eps, 就停止
@@ -29,17 +31,17 @@ class Player extends AcGameObject {
         //  是不是按下了某个技能
         this.cur_skill = null;
 
-        if (this.is_me) {
+        if (this.character !== 'robot') {
             // 如果是玩家的话, 球的内容, 就是自己的头像
             this.img = new Image();
-            this.img.src = this.playground.root.settings.photo;
+            this.img.src = this.photo;
         }
     }
 
     start () {
-        if (this.is_me) {  // 如果是玩家, 就添加监听事件, 例如鼠标点击移动, q发技能等等
+        if (this.character === 'me') {  // 如果是玩家自己, 就添加监听事件, 例如鼠标点击移动, q发技能等等
             this.add_listening_events();
-        } else { // 如果是人机, 随机在地图中, 选择一个位置, 去移动
+        } else if (this.character === 'robot') { // 如果是人机, 随机在地图中, 选择一个位置, 去移动
             let tx = Math.random() * this.playground.width / this.playground.scale;
             let ty = Math.random() * this.playground.height / this.playground.scale;
             this.move_to(tx, ty);
@@ -133,7 +135,7 @@ class Player extends AcGameObject {
         // spent_time, 代表已经玩家已经出现了多长时间
         this.spent_time += this.timedelta / 1000;
         // 如果是人机, 只有当超过四秒后, 才能发火球技能, 随机一个球1/300的概率发火球
-        if (!this.is_me && this.spent_time > 4 && Math.random() < 1 / 300.0) {
+        if (this.character === 'robot' && this.spent_time > 4 && Math.random() < 1 / 300.0) {
             // 人机发火球技能, 随机选择一个目标敌人, 发火球
             let player = this.playground.players[Math.floor(Math.random() * this.playground.players.length)];
             // 预测一下, 攻击玩家的接下来一帧的位置, 就是那个球的当前位置, 加上移动的距离, 
@@ -152,7 +154,7 @@ class Player extends AcGameObject {
             if (this.move_length < this.eps) {  // 没有移动距离了, 距离和速度置为0
                 this.move_length = 0;
                 this.vx = this.vy = 0;
-                if (!this.is_me) { // 如果是人机的话, 随机下一个移动点
+                if (this.character === 'robot') { // 如果是人机的话, 随机下一个移动点
                     let tx = Math.random() * this.playground.width / this.playground.scale;
                     let ty = Math.random() * this.playground.height / this.playground.scale;
                     this.move_to(tx, ty);
@@ -168,7 +170,7 @@ class Player extends AcGameObject {
 
     render () { // 渲染这一帧的玩家
         let scale = this.playground.scale; // 获取基准, 半径, 位置, 速度都得乘以基准
-        if (this.is_me) {  // 如果是玩家, 就画圆, 圆里面填充头像
+        if (this.character !== 'robot') {  // 如果是玩家, 就画圆, 圆里面填充头像
             this.ctx.save();
             this.ctx.beginPath();
             this.ctx.arc(this.x * scale, this.y * scale, this.radius * scale, 0, Math.PI * 2, false);

@@ -40,25 +40,35 @@ class AcGamePlayground {
         }
     }
 
-    show () { // 显示playground界面, 游戏界面, 显示地图的, 和玩家
-        this.$playgroud.show();
+    show (mode) { // 显示playground界面, 游戏界面, 显示地图的, 和玩家
 
-        this.resize();
+        const outer = this;
+        this.$playgroud.show();
 
         // 保存界面高度和宽度
         this.width = this.$playgroud.width();
         this.height = this.$playgroud.height();
         // 创建游戏地图
         this.game_map = new GameMap(this);
+        this.resize();
         this.players = [];
         this.colors = ["red", "blue", "pink", "grey", "green"];
 
-        this.players.push(new Player(this, this.width / 2 / this.scale, 0.5, 0.05, "white", 0.15, true));
-        for (let i = 0; i < 5; ++i) {
-            // 人机
-            this.players.push(new Player(this, this.width / 2 / this.scale, 0.5, 0.05, this.get_random_color(), 0.15, false));
-        }
+        this.players.push(new Player(this, this.width / 2 / this.scale, 0.5, 0.05, "white", 0.15, "me", this.root.settings.username, this.root.settings.photo));
 
+        if (mode === 'single mode') { // 单人模式添加人机
+            for (let i = 0; i < 5; ++i) {
+                // 人机
+                this.players.push(new Player(this, this.width / 2 / this.scale, 0.5, 0.05, this.get_random_color(), 0.15, "robot"));
+            }
+        }
+        else if (mode === 'multi mode') { // 默认模式
+            this.mps = new MultiPlayerSock(this);  // 建立多人模式的websocket连接
+            this.mps.uuid = this.players[0].uuid; // 连接的id 取为自己玩家的id
+            this.mps.ws.onopen = function () { // 当连接创建成功后, 调用这个函数
+                outer.mps.send_create_player(outer.root.settings.username, outer.root.settings.photo);
+            };
+        }
     }
 
     hide () {

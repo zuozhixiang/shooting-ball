@@ -6,8 +6,16 @@ class AcGameObject {
         AC_GAME_OBJECTS.push(this);
         this.hash_call_start = false; // 是否已经执行过start
         this.timedelta = 0; // 当前距离上一帧的时间间隔
-
+        this.uuid = this.create_uuid(); // 每一个游戏对象, 都有一个唯一id
     }
+    create_uuid () {
+        let res = '';
+        for (let i = 0; i < 9; ++i) {
+            res += Math.floor(Math.random() * 10);
+        }
+        return res;
+    }
+
 
     start () { // 只会在第一帧执行
 
