@@ -1,16 +1,15 @@
 
 class GameMap extends AcGameObject {
-    constructor(playground) { // 游戏地图
+    constructor(playground) {
         super();
         this.playground = playground;
-        this.$canvas = $(`<canvas></canvas>`) // canvas标签
-        this.ctx = this.$canvas[0].getContext('2d'); // 二维画布
-        // 画布的高度和宽度
+        this.$canvas = $(`<canvas></canvas>`);
+        this.ctx = this.$canvas[0].getContext('2d');
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
-
-        this.playground.$playgroud.append(this.$canvas); // 吧画图标签添加进去
+        this.playground.$playground.append(this.$canvas);
     }
+
     start () {
     }
 

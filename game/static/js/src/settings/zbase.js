@@ -140,16 +140,22 @@ class Settings {
     }
 
     logout () {
-        if (this.platform === "ACAPP") return false;
-        $.ajax({
-            url: "https://app2989.acapp.acwing.com.cn/settings/logout/",
-            type: 'GET',
-            success: function (resp) {
-                if (resp.res === "success") {
-                    location.reload();
+        if (this.platform === "ACAPP") {
+            // acapp端
+            this.root.AcWingOS.api.window.close();
+        }
+        else {
+            $.ajax({
+                url: "https://app2989.acapp.acwing.com.cn/settings/logout/",
+                type: 'GET',
+                success: function (resp) {
+                    if (resp.res === "success") {
+                        location.reload();
+                    }
                 }
-            }
-        })
+            });
+        }
+
     }
 
     start () {
