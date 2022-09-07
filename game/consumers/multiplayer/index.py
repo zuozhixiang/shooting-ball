@@ -2,62 +2,57 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import json
 from django.conf import settings
 from django.core.cache import cache
+from thrift import Thrift
+from thrift.transport import TSocket
+from thrift.transport import TTransport
+from thrift.protocol import TBinaryProtocol
+from match_system.src.match_server.match_service import Match
+from game.models.player.player import Player
+from channels.db import database_sync_to_async
 
 class MultiPlayer(AsyncWebsocketConsumer):
     async def connect(self):
         await self.accept()
 
     async def disconnect(self, close_code):
-        print('disconnect')
-        await self.channel_layer.group_discard(self.room_name, self.channel_name);
+        if self.room_name:
+            await self.channel_layer.group_discard(self.room_name, self.channel_name)
 
 
     async def create_player(self, data):
         self.room_name = None
+        self.uuid = data['uuid']
+        # 创建玩家, 应该向匹配服务发起请求
+        # Make socket
+        transport = TSocket.TSocket('localhost', 9090)
 
-        start = 0
+        # Buffering is critical. Raw sockets are very slow
+        transport = TTransport.TBufferedTransport(transport)
 
-        for i in range(start, 100000000):
-            name = "room-%d" % (i)
-            if not cache.has_key(name) or len(cache.get(name)) < settings.ROOM_CAPACITY:
-                self.room_name = name
-                break
+        # Wrap in a protocol
+        protocol = TBinaryProtocol.TBinaryProtocol(transport)
 
-        if not self.room_name:
-            return
+        # Create a client to use the protocol encoder
+        client = Match.Client(protocol)
 
-        if not cache.has_key(self.room_name):
-            cache.set(self.room_name, [], 3600)  # 有效期1小时
+        # Connect!
+        transport.open()
+        
+        def db_get_player():
+            # 通过数据库, 获取玩家信息
+            return Player.objects.get(user__username=data['username'])
+        player = await database_sync_to_async(db_get_player)()
+        client.add_player(player.score, data['uuid'], data['username'],data['photo'], self.channel_name)
 
-        for player in cache.get(self.room_name):
-            await self.send(text_data=json.dumps({
-                'event': "create_player",
-                'uuid': player['uuid'],
-                'username': player['username'],
-                'photo': player['photo'],
-            }))
+        # Close!
+        transport.close()
 
-        await self.channel_layer.group_add(self.room_name, self.channel_name)
-
-        players = cache.get(self.room_name)
-        players.append({
-            'uuid': data['uuid'],
-            'username': data['username'],
-            'photo': data['photo']
-        })
-        cache.set(self.room_name, players, 3600)  # 有效期1小时
-        await self.channel_layer.group_send(
-            self.room_name,
-            {
-                'type': "group_send_event",
-                'event': "create_player",
-                'uuid': data['uuid'],
-                'username': data['username'],
-                'photo': data['photo'],
-            }
-        )
 
     async def group_send_event(self, data):
+        if not self.room_name:
+            keys = cache.keys(f'*{self.uuid}*')
+            if keys:
+                self.room_name = keys[0]
         await self.send(text_data=json.dumps(data))
 
     async def move_to(self, data):
@@ -112,7 +107,16 @@ class MultiPlayer(AsyncWebsocketConsumer):
                 'ty': data['ty'],
             }
         )
-
+    async def message(self, data):
+        await self.channel_layer.group_send(
+            self.room_name,
+            {
+                'type': 'group_send_event',
+                'event': 'message',
+                'uuid': data['uuid'],
+                'text': data['text'],
+            }
+        )
     async def receive(self, text_data):
         data = json.loads(text_data)
         event = data['event']
@@ -126,3 +130,5 @@ class MultiPlayer(AsyncWebsocketConsumer):
             await self.attack(data)
         elif event == "blink":
             await self.blink(data)
+        elif event == 'message':
+            await self.message(data)

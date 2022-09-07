@@ -3,14 +3,17 @@ class GameMap extends AcGameObject {
     constructor(playground) {
         super();
         this.playground = playground;
-        this.$canvas = $(`<canvas></canvas>`);
+        this.$canvas = $(`<canvas tabindex=0></canvas>`); // 加上tabindex, 就可以监听各种事件了
         this.ctx = this.$canvas[0].getContext('2d');
         this.ctx.canvas.width = this.playground.width;
         this.ctx.canvas.height = this.playground.height;
         this.playground.$playground.append(this.$canvas);
+        this.start();
     }
 
     start () {
+        // 聚焦canvas, 才能监听鼠标键盘事件
+        this.$canvas.focus();
     }
 
     // 修改游戏地图的大小
