@@ -13,12 +13,27 @@ class AcGamePlayground {
         let colors = ["blue", "red", "pink", "grey", "green"];
         return colors[Math.floor(Math.random() * 5)];
     }
+    create_uuid () {
+        let res = "";
+        for (let i = 0; i < 8; ++i) {
+            let x = parseInt(Math.floor(Math.random() * 10));
+            res += x;
+        }
+        return res;
+    }
 
     start () {
         let outer = this;
-        $(window).resize(function () {
+        let uuid = this.create_uuid();
+        $(window).on(`resize.${uuid}`, function () {
+            console.log("resize");
             outer.resize();
         });
+        if (this.root.AcWingOS) {
+            this.root.AcWingOS.api.window.on_close(function () {
+                $(window).off(`resize.${uuid}`);
+            });
+        }
     }
 
     resize () {

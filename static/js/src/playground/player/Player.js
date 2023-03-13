@@ -109,7 +109,7 @@ class Player extends AcGameObject {
                     return false;
                 }
             }
-            else if (e.which === 27) {
+            else if (e.which === 27) { // esc
                 if (outer.playground.mode === "multi mode") {
                     outer.playground.chat_field.hide_input();
                 }
@@ -127,7 +127,6 @@ class Player extends AcGameObject {
             } else if (e.which === 70) {  // f
                 if (outer.blink_coldtime > outer.eps)
                     return true;
-
                 outer.cur_skill = "blink";
                 return false;
             }
